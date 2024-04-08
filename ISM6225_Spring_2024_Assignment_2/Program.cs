@@ -7,6 +7,7 @@ WRITE YOUR CODE IN THE RESPECTIVE QUESTION FUNCTION BLOCK
 */
 
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ISM6225_Spring_2024_Assignment_2
 {
@@ -99,11 +100,47 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                // Check if the input array meets the constraints
+                if (nums == null || nums.Length < 1 || nums.Length > 312)
+                    throw new ArgumentException("The length of the input array must be between 1 and 313.");
+
+                foreach (int num in nums)
+                {
+                    if (num < -100 || num > 100)
+                        throw new ArgumentException("Each element in the input array must be between -100 and 100.");
+                }
+
+                // If the array has less than 2 elements, there are no duplicates to remove
+                if (nums.Length < 2)
+                    return nums.Length;
+
+                // Initialize the index to keep track of the unique elements
+                int uniqueIndex = 1;
+
+                // Iterate through the array starting from the second element
+                for (int i = 1; i < nums.Length; i++)
+                {
+                    // If the current element is different from the previous element
+                    if (nums[i] != nums[i - 1])
+                    {
+                        // Place the current element at the uniqueIndex position
+                        nums[uniqueIndex] = nums[i];
+                        // Increment the uniqueIndex to prepare for the next unique element
+                        uniqueIndex++;
+                    }
+                }
+
+                // The uniqueIndex now represents the number of unique elements in the array
+                return uniqueIndex;
+            }
+            catch (ArgumentException ex)
+            {
+                // If the input array does not meet the constraints, throw the exception
+                throw new ArgumentException(ex.Message);
             }
             catch (Exception)
             {
+                // If any other exception occurs, throw it
                 throw;
             }
         }
@@ -134,8 +171,42 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<int>();
+                // Check if the length of the input array is within the constraints
+                if (nums.Length < 1 || nums.Length > 104)
+                {
+                    throw new ArgumentException("The length of the input array must be between 1 and 104(inclusive).");
+                }
+
+                // Initialize a variable to keep track of the next non-zero element position
+                int nextNonZeroPos = 0;
+
+                // Iterate through the array
+                for (int i = 0; i < nums.Length; i++)
+                {
+                    // Check if the current element is within the constraints
+                    if (nums[i] < -231 || nums[i] > 230)
+                    {
+                        throw new ArgumentException("The values of the elements in the array must be between -231 and 230(inclusive).");
+                    }
+
+                    // If the current element is non-zero
+                    if (nums[i] != 0)
+                    {
+                        // Swap the current element with the element at the next non-zero position
+                        (nums[nextNonZeroPos], nums[i]) = (nums[i], nums[nextNonZeroPos]);
+
+                        // Increment the next non-zero position
+                        nextNonZeroPos++;
+                    }
+                }
+
+                // Return the modified array as a list
+                return nums.ToList();
+            }
+            catch (ArgumentException ex)
+            {
+                // Throw the exception with the appropriate error message
+                throw new Exception(ex.Message);
             }
             catch (Exception)
             {
@@ -185,11 +256,79 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
+                // Check if the input array has at least 3 and less tan 3000 elements
+                if (nums.Length < 3 || nums.Length > 3000)
+                {
+                    throw new ArgumentException("The length of the input array must be between 3 and 3000(inclusive).");
+                }
+
+                // Sort the input array in ascending order
+                Array.Sort(nums);
+
+                // Initialize the result list to store the triplets
+                List<IList<int>> result = new List<IList<int>>();
+
+                // Iterate through the array, fixing the first element
+                for (int i = 0; i < nums.Length - 2; i++)
+                {
+                    // Skip duplicates for the first element
+                    if (i > 0 && nums[i] == nums[i - 1])
+                    {
+                        continue;
+                    }
+
+                    // Initialize the left and right pointers
+                    int left = i + 1;
+                    int right = nums.Length - 1;
+
+                    // Iterate until the left pointer is less than the right pointer
+                    while (left < right)
+                    {
+                        // Calculate the sum of the current triplet
+                        int sum = nums[i] + nums[left] + nums[right];
+
+                        // If the sum is 0, add the triplet to the result list and move the pointers
+                        if (sum == 0)
+                        {
+                            result.Add(new List<int> { nums[i], nums[left], nums[right] });
+
+                            // Skip duplicates for the second and third elements
+                            while (left < right && nums[left] == nums[left + 1])
+                            {
+                                left++;
+                            }
+                            while (left < right && nums[right] == nums[right - 1])
+                            {
+                                right--;
+                            }
+
+                            left++;
+                            right--;
+                        }
+                        // If the sum is less than 0, move the left pointer to the right
+                        else if (sum < 0)
+                        {
+                            left++;
+                        }
+                        // If the sum is greater than 0, move the right pointer to the left
+                        else
+                        {
+                            right--;
+                        }
+                    }
+                }
+
+                return result;
+            }
+            catch (ArgumentException ex)
+            {
+                // Handle the case where the input array has less than 3 elements
+                Console.WriteLine(ex.Message);
                 return new List<IList<int>>();
             }
             catch (Exception)
             {
+                // Handle any other exceptions that may occur
                 throw;
             }
         }
@@ -220,11 +359,59 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
+                // Check if the input array is valid (within the constraints)
+                if (nums == null || nums.Length < 1 || nums.Length > 106)
+                {
+                    throw new ArgumentException("Invalid input array size. The array length must be between 1 and 106.");
+                }
+
+                // Check if all elements in the array are either 0 or 1
+                foreach (int num in nums)
+                {
+                    if (num != 0 && num != 1)
+                    {
+                        throw new ArgumentException("The array elements must be either 0 or 1.");
+                    }
+                }
+
+                // Initialize the maximum count of consecutive 1's to 0
+                int maxConsecutiveOnes = 0;
+
+                // Initialize the current count of consecutive 1's to 0
+                int currentConsecutiveOnes = 0;
+
+                // Iterate through the input array
+                foreach (int num in nums)
+                {
+                    // If the current element is 1, increment the current count of consecutive 1's
+                    if (num == 1)
+                    {
+                        currentConsecutiveOnes++;
+                    }
+                    // If the current element is 0, reset the current count of consecutive 1's
+                    else
+                    {
+                        // Update the maximum count of consecutive 1's if the current count is greater
+                        maxConsecutiveOnes = Math.Max(maxConsecutiveOnes, currentConsecutiveOnes);
+                        currentConsecutiveOnes = 0;
+                    }
+                }
+
+                // Update the maximum count of consecutive 1's for the last sequence (if any)
+                maxConsecutiveOnes = Math.Max(maxConsecutiveOnes, currentConsecutiveOnes);
+
+                // Return the maximum count of consecutive 1's
+                return maxConsecutiveOnes;
+            }
+            catch (ArgumentException ex)
+            {
+                // Handle the case where the input array has less than 3 elements
+                Console.WriteLine(ex.Message);
                 return 0;
             }
             catch (Exception)
             {
+                // Throw an exception if any unexpected error occurs
                 throw;
             }
         }
@@ -257,6 +444,38 @@ namespace ISM6225_Spring_2024_Assignment_2
             try
             {
                 // Write your code here and you can modify the return value according to the requirements
+                // Check if the input binary number is within the given constraints
+                if (binary < 1 || binary > 1000000000)
+                {
+                    throw new ArgumentException("Binary number must be between 1 and 1,000,000,000 (inclusive).");
+                }
+
+                int decimaldigit = 0;
+
+                // Iterate through the binary number, starting from the least significant bit
+                while (binary > 0)
+                {
+                    // Get the last digit of the binary number
+                    int digit = binary % 10;
+                    // Check if the digit is either 0 or 1
+                    if (digit != 0 && digit != 1)
+                    {
+                        throw new ArgumentException("Binary number must contain only 0s and 1s.");
+                    }
+
+                    // Add the contribution of the current digit to the decimal value
+                    decimaldigit = decimaldigit * 2 + digit;
+
+                    // Move to the next digit in the binary number
+                    binary /= 10;
+                }
+
+                return decimaldigit;
+            }
+            catch(ArgumentException ex)
+            {
+                // Handle the case where the input array has less than 3 elements
+                Console.WriteLine(ex.Message);
                 return 0;
             }
             catch (Exception)
@@ -294,14 +513,80 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
+                if (nums.Length < 2)
+                {
+                    return 0;
+                }
+
+                // Check if the input array contains elements outside the given range
+                foreach (int num in nums)
+                {
+                    if (num < 0 || num > 109)
+                    {
+                        throw new ArgumentException("Array elements must be between 0 and 109 (inclusive).");
+                    }
+                }
+
+                // Check if the input array has more than 105 elements
+                if (nums.Length > 105)
+                {
+                    throw new ArgumentException("Array length must be between 1 and 105 (inclusive).");
+                }
+
+                // Find the minimum and maximum values in the array
+                int min = nums.Min();
+                int max = nums.Max();
+
+                // Create buckets to store the minimum and maximum values in each bucket
+                int bucketSize = Math.Max(1, (max - min) / (nums.Length - 1));
+                int bucketCount = (max - min) / bucketSize + 1;
+                int[] bucketMin = new int[bucketCount];
+                int[] bucketMax = new int[bucketCount];
+
+                // Initialize the bucket values
+                for (int i = 0; i < bucketCount; i++)
+                {
+                    bucketMin[i] = int.MaxValue;
+                    bucketMax[i] = int.MinValue;
+                }
+
+                // Distribute the array elements into the buckets
+                foreach (int num in nums)
+                {
+                    int bucketIndex = (num - min) / bucketSize;
+                    bucketMin[bucketIndex] = Math.Min(bucketMin[bucketIndex], num);
+                    bucketMax[bucketIndex] = Math.Max(bucketMax[bucketIndex], num);
+                }
+
+                // Find the maximum gap between the buckets
+                int maxGap = 0;
+                int prevMax = min;
+                for (int i = 0; i < bucketCount; i++)
+                {
+                    if (bucketMin[i] == int.MaxValue && bucketMax[i] == int.MinValue)
+                    {
+                        continue; // Skip empty buckets
+                    }
+
+                    maxGap = Math.Max(maxGap, bucketMin[i] - prevMax);
+                    prevMax = bucketMax[i];
+                }
+
+                return maxGap;
+            }
+            catch (ArgumentException ex)
+            {
+                // Handle the case where if the input array contains elements outside the given range
+                Console.WriteLine(ex.Message);
                 return 0;
             }
             catch (Exception)
             {
                 throw;
             }
-        }
+
+        }  
+        // Check if the input array has less than 2 elements
 
         /*
 
@@ -334,7 +619,37 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
+                if (nums == null || nums.Length < 1 || nums.Length > 105)
+                {
+                    throw new ArgumentException("Invalid input array size. The array length must be between 1 and 105.");
+                }
+                foreach (int num in nums)
+                {
+                    if (num < 1 || num > 106)
+                        throw new ArgumentException("Each element in the input array must be between 1 and 106.");
+                }
+                // Sort the input array in descending order
+                Array.Sort(nums);
+                Array.Reverse(nums);
+
+                // Iterate through the sorted array and check if the current three elements can form a valid triangle
+                for (int i = 0; i < nums.Length - 2; i++)
+                {
+                    // The sum of the lengths of any two sides of a triangle must be greater than the length of the third side
+                    if (nums[i] < nums[i + 1] + nums[i + 2])
+                    {
+                        // If the condition is met, return the perimeter of the triangle
+                        return nums[i] + nums[i + 1] + nums[i + 2];
+                    }
+                }
+
+                // If no valid triangle can be formed, return 0
+                return 0;
+            }
+            catch (ArgumentException ex)
+            {
+                // Handle the case where the input array has less than 3 elements
+                Console.WriteLine(ex.Message);
                 return 0;
             }
             catch (Exception)
@@ -388,8 +703,45 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return "";
+                // Check if the input strings are within the constraints
+                if (s.Length < 1 || s.Length > 1000 || part.Length < 1 || part.Length > 1000)
+                {
+                    throw new ArgumentException("Input strings must be between 1 and 1000 characters long.");
+                }
+                // Check if the input strings contain only lowercase English letters
+                foreach (char c in s)
+                {
+                    if (c < 'a' || c > 'z')
+                    {
+                        throw new ArgumentException("Input strings must contain only lowercase English letters.");
+                    }
+                }
+                foreach (char c in part)
+                {
+                    if (c < 'a' || c > 'z')
+                    {
+                        throw new ArgumentException("Input strings must contain only lowercase English letters.");
+                    }
+                }
+                // Initialize a string to store the modified string
+                string result = s;
+
+                // Keep removing the leftmost occurrence of the part string until no more occurrences are found
+                while (true)
+                {
+                    int index = result.IndexOf(part);
+                    if (index == -1)
+                    {
+                        // No more occurrences of the part string found, return the modified string
+                        return result;
+                    }
+                    result = result.Substring(0, index) + result.Substring(index + part.Length);
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return s;
             }
             catch (Exception)
             {
